@@ -222,11 +222,14 @@ public class Client{
         while ((count = in.read(bytes)) > 0) {
             out.write(bytes, 0, count);
         }
-
-        out.close();
-        in.close();
-        socket.close();
-        serverSocket.close();
+        try {
+            out.close();
+            in.close();
+            socket.close();
+            serverSocket.close();
+        } catch (Exception e) {
+            System.out.println("error on closing streams");
+        }
     }
 
 

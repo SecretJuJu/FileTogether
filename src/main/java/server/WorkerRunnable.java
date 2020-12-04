@@ -22,6 +22,7 @@ public class WorkerRunnable implements Runnable{
     public WorkerRunnable(Socket clientSocket, String filePath) {
         this.clientSocket = clientSocket;
         this.filePath   = filePath;
+        this.filePath = this.filePath.replace("\\","/");
         String[] bits = filePath.split("/");
         this. filename = bits[bits.length-1];
     }
