@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.regex.Pattern;
 
 public class Client{
     final int COMMADNPORT = 6000;
@@ -19,7 +20,11 @@ public class Client{
     private final int DOWNLOADBIT = 2;
     private final int FAILBIT = 0;
     String downloadFolder = System.getProperty("user.home")+"/FileTogetherDownload";
-
+    static boolean contains(String pattern, String text, Integer fromIndex){
+        if(fromIndex != null && fromIndex < text.length())
+            return Pattern.compile(pattern).matcher(text).find();
+        return Pattern.compile(pattern).matcher(text).find();
+    }
 //    System.out.println(downloadFolder);
     private InterfaceData myInterface = null;
     public String[] scan() {
@@ -81,8 +86,7 @@ public class Client{
                     InterfaceAddress ia = it.next();
                     if(ia.getAddress().toString().contains(":")) {
                         continue;
-                    }else if(ia.getAddress().toString().replace("/","").matches("^127*")) continue;
-
+                    }
 
                     data.setIpAddress(ia.getAddress().toString().replace("/",""));
                     data.setPrefix(ia.getNetworkPrefixLength());
