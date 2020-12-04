@@ -173,10 +173,9 @@ public class MainCont {
 
 
     public static void main(String[] args) {
-
+        String downloadFolder = System.getProperty("user.home")+"/FileTogetherDownload";
+        new File(downloadFolder).mkdir();
         new initUI();
-
-
     }
 
 }

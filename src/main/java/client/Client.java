@@ -73,13 +73,17 @@ public class Client{
             while(en.hasMoreElements()){
                 NetworkInterface ni = en.nextElement();
                 InterfaceData data = new InterfaceData();
-
                 data.setNicName(ni.getName());
                 List<InterfaceAddress> list = ni.getInterfaceAddresses();
                 Iterator<InterfaceAddress> it = list.iterator();
 
                 while(it.hasNext()){
                     InterfaceAddress ia = it.next();
+                    if(ia.getAddress().toString().contains(":")) {
+                        continue;
+                    }else if(ia.getAddress().toString().replace("/","").matches("^127*")) continue;
+
+
                     data.setIpAddress(ia.getAddress().toString().replace("/",""));
                     data.setPrefix(ia.getNetworkPrefixLength());
                 }
