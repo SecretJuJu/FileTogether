@@ -42,6 +42,17 @@ public class WorkerRunnable implements Runnable{
                 if (this.filePath != null){
                     System.out.println("DOWNLOAD BIT");
                     clientSocket.getOutputStream().write(SUCCSSESSBIT);
+
+                    this.filePath   = filePath;
+                    String[] bits = filePath.split("/");
+                    this. filename = bits[bits.length-1];
+                    OutputStream ous = clientSocket.getOutputStream();
+                    DataOutputStream dous = new DataOutputStream(ous);
+                    dous.writeUTF(filename);
+                    dous.flush();
+                    dous.close();
+
+
                     System.out.println("FILE TRANSFERING");
                     dataTransfer(clientSocket.getInetAddress().toString().replace("/",""));
                 } else {
@@ -64,7 +75,7 @@ public class WorkerRunnable implements Runnable{
 
             socket = new Socket(ip, DATAPORT);
 
-            File file = new File("/Users/secret/testFIle");
+            File file = new File(this.filePath);
             // Get the size of the file
             long length = file.length();
             byte[] bytes = new byte[16 * 1024];

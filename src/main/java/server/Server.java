@@ -20,12 +20,13 @@ public class Server implements Runnable{
     private final int DATAPORT = 6060;
     private String filePath = null;
     protected ServerSocket serverSocket = null;
-    protected boolean      isStopped    = false;
+    protected boolean      isStopped    = true;
     protected Thread       runningThread= null;
 
 
     @Override
     public void run() {
+        this.isStopped = false;
         synchronized(this){
             this.runningThread = Thread.currentThread();
         }
@@ -66,12 +67,12 @@ public class Server implements Runnable{
         try {
             this.serverSocket = new ServerSocket(this.COMMANDPORT);
         } catch (IOException e) {
-            throw new RuntimeException("Cannot open port 8080", e);
+            System.out.println("error");
         }
     }
 
 
-
+    public boolean getIsStppped() {return isStopped;}
     public void setFilePath(String filePath){
         this.filePath = filePath;
     }

@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-
 public class Client{
     final int COMMADNPORT = 6000;
     final int DATAPORT = 6060;
@@ -19,9 +18,11 @@ public class Client{
     private final int SUCCSSESSBIT = 1;
     private final int DOWNLOADBIT = 2;
     private final int FAILBIT = 0;
+    String downloadFolder = System.getProperty("user.home")+"/FileTogetherDownload";
 
+//    System.out.println(downloadFolder);
     private InterfaceData myInterface = null;
-    public ArrayList<String> scan() {
+    public String[] scan() {
         InterfaceData ifd = null;
         if ( this.getMyInterface() == null ){
             System.out.println("no interface setted");
@@ -34,7 +35,7 @@ public class Client{
 
         SubnetUtils utils = new SubnetUtils(ifd.getIpAddress()+"/"+ifd.getPrefix());
         String[] allIps = utils.getInfo().getAllAddresses();
-        final ExecutorService es = Executors.newFixedThreadPool(25);
+        final ExecutorService es = Executors.newFixedThreadPool(255);
         final int timeout = 2000;
         final List<Future<String>> futures = new ArrayList<>();
 
@@ -56,8 +57,8 @@ public class Client{
                 System.out.println("error");
             }
         }
-
-        return serverList;
+        System.out.println("scan end");
+        return serverList.toArray(new String[serverList .size()]);
 
     }
     public ArrayList<InterfaceData> getInterfaces(){
@@ -91,7 +92,7 @@ public class Client{
 
         return interfaceList;
     }
-    public Boolean Download(String ip){
+    public Boolean download(String ip){
         try{
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(ip, COMMADNPORT),1000);
@@ -100,7 +101,14 @@ public class Client{
             int res = socket.getInputStream().read();
             if(res == SUCCSSESSBIT){
                 System.out.println("File Transfer start");
-                makeDataTranserfer();
+
+                InputStream ins = socket.getInputStream(); //inputstream 과 연결되었
+                DataInputStream dins = new DataInputStream(ins);
+
+                String filename= dins.readUTF();
+                dins.close();
+                
+                makeDataTranserfer(filename);
                 return true;
             } else {
                 return false;
@@ -134,13 +142,16 @@ public class Client{
         public void setPrefix(short prefix) {
             this.prefix = prefix;
         }
+
     }
     public static Future<String> Ping(final ExecutorService es, final String ip, final int port, final int timeout,int SCANBIT,int SUCCSSESSBIT,int FAILBIT) {
         return es.submit(new Callable<String>() {
             @Override public String call() {
                 try {
+                    System.out.println(ip);
                     Socket socket = new Socket();
                     socket.connect(new InetSocketAddress(ip, port), timeout);
+
                     System.out.println("scanning");
                     DataOutputStream out;
                     out = new DataOutputStream(socket.getOutputStream());
@@ -165,7 +176,7 @@ public class Client{
             }
         });
     }
-    private void makeDataTranserfer() throws IOException {
+    private void makeDataTranserfer(String filename) throws IOException {
         ServerSocket serverSocket = null;
 
         try {
@@ -192,7 +203,7 @@ public class Client{
         }
 
         try {
-            out = new FileOutputStream("/Users/secret/aaaaa");
+            out = new FileOutputStream(downloadFolder+"/"+filename);
         } catch (FileNotFoundException ex) {
             System.out.println("File not found. ");
         }
