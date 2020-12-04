@@ -23,19 +23,29 @@ class initUI extends JFrame{
         JPanel mainPanel = new JPanel();
         JPanel serverPanel = new JPanel();
         JPanel clientPanel = new JPanel();
-        JButton selectFile = new JButton("Select file");
-        JButton serverSwitch = new JButton("Server ON");
+        JButton selectFile = new JButton("Select File");
+        JButton serverSwitch = new JButton("SHARE");
         serverSwitch.setVisible(false);
         mainPanel.setLayout(new GridLayout(1,2));
         JButton selectInterface = new JButton("Select");
         JLabel myIntShow = new JLabel();
-        JButton refreshBtn = new JButton("Refresh");
+        JButton refreshBtn = new JButton("Search Server");
+        JButton downloadBtn = new JButton("Download");
+
+        JPanel serverSearch = new JPanel();
+        JPanel downloadPanel = new JPanel();
+
+
+
+
 
         refreshBtn.setVisible(false);
 
+        serverSearch.setVisible(false);
+        downloadPanel.setVisible(true);
 
         // mainPanel
-        JButton setModeServer = new JButton("set Server");
+        JButton setModeServer = new JButton("SET SERVER");
         setModeServer.addActionListener(new ActionListener(){ //익명클래스로 리스너 작성
             public void actionPerformed(ActionEvent e){
                 serverPanel.setVisible(true);
@@ -46,13 +56,13 @@ class initUI extends JFrame{
 
                 f.add(mainPanel, BorderLayout.NORTH);
                 f.add(serverPanel, BorderLayout.CENTER);
-                f.setSize(600,600);
+                f.setSize(600,150);
                 serverPanel.add(selectFile);
                 System.out.println("server");
             }
         });;
 
-        JButton setModeClient = new JButton("set Client");
+        JButton setModeClient = new JButton("SET CLIENT");
         setModeClient.addActionListener(new ActionListener(){ //익명클래스로 리스너 작성
             public void actionPerformed(ActionEvent e){
                 serverPanel.setVisible(false);
@@ -63,7 +73,7 @@ class initUI extends JFrame{
                 f.remove(serverPanel);
                 f.add(mainPanel, BorderLayout.NORTH);
                 f.add(clientPanel, BorderLayout.CENTER);
-                f.setSize(600,600);
+                f.setSize(600,150);
                 System.out.println("client");
             }
         });;
@@ -98,7 +108,8 @@ class initUI extends JFrame{
         // serverPanel
 
         // clientPanel
-        clientPanel.setLayout(new FlowLayout());
+        clientPanel.setLayout(new GridLayout(2,1));
+        serverSearch.setLayout(new FlowLayout());
         ArrayList<Client.InterfaceData> interfaces = MainCont.c.getInterfaces();
         ArrayList<String> interfaceToString = new ArrayList<String>();
         for (Client.InterfaceData i: interfaces) {
@@ -118,14 +129,15 @@ class initUI extends JFrame{
                 for (Client.InterfaceData i: interfaces) {
                     if (i.getIpAddress().equals(ipAddr) && i.getNicName().equals(nicName)){
                         MainCont.c.setMyInterface(i);
-                        myIntShow.setText(intData);
                         refreshBtn.setVisible(true);
                     }
                 }
+
+                serverSearch.setVisible(true);
             }
         });
-        clientPanel.add(refreshBtn);
-        clientPanel.add(myIntShow);
+        serverSearch.add(refreshBtn);
+        serverSearch.add(myIntShow);
 
         JComboBox selectIP = new JComboBox();
         selectIP.setVisible(false);
@@ -136,13 +148,16 @@ class initUI extends JFrame{
                 String allIp[] = MainCont.c.scan();
                 selectIP.setVisible(true);
                 for (String ip : allIp) {
+                    downloadBtn.setVisible(true);
                     selectIP.addItem(new String(ip));
                 }
+                serverSearch.setVisible(true);
             }
         });
 
-        JButton downloadBtn = new JButton("Download");
-        clientPanel.add(downloadBtn);
+
+        downloadPanel.add(downloadBtn);
+        downloadBtn.setVisible(false);
         downloadBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -157,6 +172,8 @@ class initUI extends JFrame{
         });
 
 
+        clientPanel.add(serverSearch);
+        clientPanel.add(downloadPanel);
         f.add(mainPanel);
         f.setSize(600,300);
         f.setVisible(true);
@@ -176,6 +193,8 @@ public class MainCont {
         String downloadFolder = System.getProperty("user.home")+"/FileTogetherDownload";
         new File(downloadFolder).mkdir();
         new initUI();
+
+
     }
 
 }
